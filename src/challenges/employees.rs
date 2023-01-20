@@ -23,19 +23,13 @@ pub fn parse_command(command: &str) -> Option<EmployeeCommand> {
     }
 
     if let Some(captures) = add_command_regex.captures(&command) {
-        let name_option = captures.get(1);
-        let dept = captures.get(2);
+        let name = String::from(captures.get(1)?.as_str());
+        let department = String::from(captures.get(2)?.as_str());
 
-        match (name_option, dept) {
-            (Some(name), Some(dept)) => Some(EmployeeCommand::Add(Employee {
-                name: String::from(name.as_str()),
-                department: String::from(dept.as_str()),
-            })),
-            _ => None,
-        }
+        Some(EmployeeCommand::Add(Employee { name, department }))
     } else if let Some(captures) = list_command_regex.captures(&command) {
-        let dept_option = captures.get(1);
-        dept_option
+        captures
+            .get(1)
             .map(|dept| String::from(dept.as_str()))
             .map(|dept| EmployeeCommand::List(dept))
     } else {
