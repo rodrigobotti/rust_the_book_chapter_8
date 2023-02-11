@@ -1,11 +1,10 @@
-mod challenges;
-mod utils;
-
-use crate::challenges::employees::{self, Employee, EmployeeCommand};
-use crate::challenges::math;
-use crate::challenges::pig_latin;
 use std::collections::HashMap;
 use std::io;
+
+use chapter_eight::challenges::employees::{Employee, EmployeeCommand};
+use chapter_eight::challenges::math;
+use chapter_eight::challenges::pig_latin;
+use chapter_eight::utils;
 
 fn main() {
     median_program();
@@ -26,13 +25,13 @@ fn main() {
 fn median_program() {
     let xs = [1, 2, 3, 4, 5, 6, 7];
     let xs_median = math::median(&xs);
-    println!("{:?} has {} as median", xs, xs_median);
+    println!("{xs:?} has {xs_median} as median");
 }
 
 fn mode_program() {
     let xs = [1, 2, 1, 1, 3, 3, 4, 5];
     let xs_mode = math::mode(&xs);
-    println!("{:?} has {} as mode", xs, xs_mode);
+    println!("{xs:?} has {xs_mode} as mode");
 }
 
 fn pig_latin_program() {
@@ -68,7 +67,7 @@ fn ask_validate_command() -> EmployeeCommand {
             .read_line(&mut input)
             .expect("** Failed to read from stdin **");
 
-        match employees::parse_command(&input.trim()) {
+        match EmployeeCommand::parse(input.trim()) {
             Some(command) => break command,
             None => {
                 println!("** Please type in a valid command text **");
@@ -82,12 +81,11 @@ fn employee_program() {
     let mut company: HashMap<String, Vec<String>> = HashMap::new();
 
     println!(
-        "{}",
         "
     Welcome to the employee management program    
     valid employee commands:
-    - Add {Employee} to {Department}
-    - List employees from {Department}
+    - Add <Employee> to <Department>
+    - List employees from <Department>
     - List all employees
     "
     );
@@ -97,8 +95,8 @@ fn employee_program() {
 
         match employee_command {
             EmployeeCommand::Add(Employee { name, department }) => {
-                println!(">> Adding {} to {}", name, department);
-                let employee_list = company.entry(department).or_insert(vec![]);
+                println!(">> Adding {name} to {department}");
+                let employee_list = company.entry(department).or_default();
                 employee_list.push(name);
             }
             EmployeeCommand::List(dept) => match company.get(&dept) {
@@ -109,7 +107,7 @@ fn employee_program() {
                 }
                 None => println!(">> No employees in this department"),
             },
-            EmployeeCommand::ListAll => println!(">> {:?}", company),
+            EmployeeCommand::ListAll => println!(">> {company:?}"),
         }
     }
 }

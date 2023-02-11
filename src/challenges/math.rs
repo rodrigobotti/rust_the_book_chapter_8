@@ -25,7 +25,7 @@ pub fn median(xs: &[i32]) -> f64 {
 }
 
 pub fn mode(xs: &[i32]) -> i32 {
-    assert!(xs.len() > 0, "xs must have elements");
+    assert!(!xs.is_empty(), "xs must have elements");
 
     let mut frequencies: HashMap<i32, u32> = HashMap::new();
 
